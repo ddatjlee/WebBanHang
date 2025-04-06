@@ -1,0 +1,95 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Web_Core.Models
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+   ViewData["Title"] = "Quản lý người dùng";
+   Layout = "~/Views/Shared/_Layout.cshtml";
+   var roles = ViewBag.Roles as List<IdentityRole> ?? new List<IdentityRole>();
+   var userRoles = ViewBag.UserRoles as Dictionary<string, string> ?? new Dictionary<string, string>();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+   <h2 class="text-uppercase fw-bold">Quản lý người dùng</h2>
+   @if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+   <a href="@Url.Action("RegisterEmployee", "Admin", new { area = "Admin" })" class="btn btn-success">
+    <i class="fas fa-user-plus"></i> Tạo tài khoản nhân viên
+   </a>
+</div>
+
+<div class="table-responsive">
+   <table class="table table-hover align-middle text-center">
+      <thead class="table-dark">
+         <tr>
+            <th class="text-uppercase">Tên đăng nhập</th>
+            <th class="text-uppercase">Email</th>
+            <th class="text-uppercase">Quyền hiện tại</th>
+            <th class="text-uppercase">Cập nhật quyền</th>
+         </tr>
+      </thead>
+      <tbody>
+         @foreach (var user in Model)
+         {
+            var userRoleId = userRoles.ContainsKey(user.Id) ? userRoles[user.Id] : "";
+            var currentRole = roles.FirstOrDefault(r => r.Id == userRoleId);
+            var isAdmin = currentRole?.Name == "Admin";
+
+            <tr>
+               <td class="fw-semibold">@user.UserName</td>
+               <td>@user.Email</td>
+               <td>
+                  @if (currentRole != null)
+                  {
+                     <span class="badge bg-success">@currentRole.Name</span>
+                  }
+                  else
+                  {
+                     <span class="badge bg-warning text-dark">Chưa có quyền</span>
+                  }
+               </td>
+               <td>
+                  @if (isAdmin)
+                  {
+                     <span class="text-muted">Không thể chỉnh sửa</span>
+                  }
+                  else
+                  {
+                     <form method="post" asp-action="Index" asp-area="Admin" asp-controller="Admin" class="d-flex gap-2 align-items-center update-role-form">
+                        <input type="hidden" name="userId" value="@user.Id" />
+                        <select name="roleId" class="form-select w-auto">
+                           @foreach (var role in roles)
+                           {
+                              <option value="@role.Id" selected="@(role.Id == userRoleId ? "selected" : null)">@role.Name</option>
+                           }
+                        </select>
+                        <button type="submit" class="btn btn-primary btn-sm">
+                           <i class="bi bi-save"></i> Lưu
+                        </button>
+                     </form>
+                  }
+               </td>
+            </tr>
+         }
+      </tbody>
+   </table>
+</div>
+
+<script>
+   document.querySelectorAll('.update-role-form').forEach(form => {
+       form.addEventListener('submit', function (event) {
+           let userName = this.closest('tr').querySelector('td:first-child').textContent.trim();
+           let selectedRole = this.querySelector('select[name="roleId"] option:checked').textContent.trim();
+           if (!confirm(`Bạn có chắc chắn muốn thay đổi quyền của ${userName} thành ${selectedRole}?`)) {
+               event.preventDefault();
+           }
+       });
+   });
+</script>
+

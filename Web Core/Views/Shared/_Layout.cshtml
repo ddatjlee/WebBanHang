@@ -1,0 +1,289 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<title>Quán Cà Phê Mộc Nhiên</title>
+
+	<!-- CSS FILES -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,400;0,600;0,700;1,200;1,700&display=swap"
+		rel="stylesheet">
+	<link href="~/css/bootstrap.min.css" rel="stylesheet">
+	<link href="~/css/bootstrap-icons.css" rel="stylesheet">
+	<link href="~/css/vegas.min.css" rel="stylesheet">
+	<link href="~/css/tooplate-barista.css" rel="stylesheet">
+	<link href="~/css/layout.css" rel="stylesheet" asp-append-version="true">
+	<link href="~/css/login.css" rel="stylesheet" />
+	<link href="~/css/logout.css" rel="stylesheet" />
+	<link href="~/css/register.css" rel="stylesheet" />
+	<!-- Bootstrap icons-->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+</head>
+
+<body>
+	<main style="margin-top: 100px;">
+		<nav class="navbar navbar-expand-lg">
+			<div class="container">
+				<!-- Logo thương hiệu -->
+				<a class="navbar-brand" href="/">
+					<img src="~/images/coffee-beans.png" alt=""> mocnhien.co
+				</a>
+
+				<!-- Menu chính -->
+				<div class="navbar-nav">
+					<a class="nav-link" href="/">Trang chủ</a>
+					<a class="nav-link" href="#section_2">Về chúng tôi</a>
+					<a class="btn custom-btn smoothscroll me-2 mb-2" href="#section_3"><strong>Thực đơn</strong></a>
+					<a class="nav-link" href="#section_4">Nhận xét</a>
+					<a class="nav-link" href="#section_5">Liên hệ</a>
+				</div>
+
+				<!-- Nhóm bên phải: Đăng nhập, Đăng ký, Giỏ hàng, Đặt bàn -->
+				<div class="nav-right">
+					<a class="nav-icon" href="/Home/Reservation">
+						<i class="bi bi-calendar-check"></i> Đặt bàn
+					</a>
+					<a class="nav-icon" href="/ShoppingCart/Index">
+						<i class="bi bi-cart-fill"></i> Giỏ hàng
+					</a>
+					<ul class="navbar-nav">
+						<partial name="_LoginPartial" />
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<style>
+			main {
+				padding-top: 70px;
+				/* Điều chỉnh tùy theo chiều cao thực tế của navbar */
+			}
+
+			/* Thanh Navbar */
+			.navbar {
+				min-height: 100px;
+				/* Đảm bảo navbar có cùng chiều cao */
+				position: absolute;
+				top: 0;
+				width: 100%;
+				background: rgba(74, 47, 30, 0.9);
+				z-index: 1000;
+			}
+
+			/* Logo */
+			.navbar-brand {
+				font-size: 20px;
+				/* Chỉnh lại size chữ */
+				display: flex;
+				align-items: center;
+				gap: 5px;
+				text-decoration: none;
+				color: white;
+				font-weight: bold;
+			}
+
+			.navbar-brand img {
+				height: 32px;
+				/* Logo to hơn 1 chút */
+			}
+
+			/* Menu chính */
+			.navbar-nav {
+				display: flex;
+				gap: 15px;
+				justify-content: center;
+			}
+
+			.navbar-nav .nav-link {
+				font-size: 14px;
+				padding: 6px 10px;
+				color: white;
+				text-transform: uppercase;
+				text-decoration: none;
+				font-weight: 500;
+				transition: 0.3s ease-in-out;
+			}
+
+			.navbar-nav .nav-link:hover {
+				color: #ffcc80;
+			}
+
+			/* Nhóm bên phải */
+			.nav-right {
+				display: flex;
+				align-items: center;
+				gap: 15px;
+			}
+
+			/* Icon + nút */
+			.nav-icon {
+				font-size: 14px;
+				color: white;
+				text-decoration: none;
+				display: flex;
+				align-items: center;
+				gap: 5px;
+				font-weight: 500;
+				transition: 0.3s ease-in-out;
+			}
+
+			.nav-icon i {
+				font-size: 16px;
+			}
+
+			.nav-icon:hover {
+				color: #ffcc80;
+			}
+
+			/* Đăng ký & Đăng nhập */
+			.nav-right .btn-sm {
+				font-size: 13px;
+				/* Giảm size chữ */
+				padding: 6px 14px;
+				border-radius: 6px;
+				font-weight: bold;
+			}
+
+			/* Nút Đăng ký */
+			.nav-right .btn-outline-light {
+				color: white;
+				border: 2px solid white;
+				/* Viền rõ hơn */
+				border-radius: 6px;
+				padding: 6px 14px;
+				transition: 0.3s ease-in-out;
+			}
+
+			.nav-right .btn-outline-light:hover {
+				background-color: white;
+				color: #4a2f1e;
+			}
+
+			/* Nút Đăng nhập */
+			.nav-right .btn-primary {
+				background-color: #ff9800;
+				border: 2px solid #ff9800;
+				border-radius: 6px;
+				padding: 6px 14px;
+				color: white;
+				transition: 0.3s ease-in-out;
+			}
+
+			.nav-right .btn-primary:hover {
+				background-color: #e68900;
+				border-color: #e68900;
+			}
+
+			/* Form đăng xuất */
+			.nav-right form {
+				margin: 0;
+				padding: 0;
+				display: inline;
+			}
+
+			.nav-right form button {
+				background: none;
+				border: none;
+				color: white;
+				padding: 5px 10px;
+				cursor: pointer;
+				transition: 0.3s ease-in-out;
+			}
+
+			.nav-right form button:hover {
+				color: #ffcc80;
+			}
+		</style>
+
+		@RenderBody() <!-- Nội dung của các trang sẽ được chèn vào đây -->
+
+		<footer class="site-footer">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-4 col-12 me-auto">
+						<em class="text-white d-block mb-4">Chúng tôi ở đâu?</em>
+						<strong class="text-white">
+							<i class="bi-geo-alt me-2"></i>
+							Đại học HUTECH - Cơ sở Thủ Đức, TP. Hồ Chí Minh, Việt Nam
+						</strong>
+						<ul class="social-icon mt-4">
+							<li class="social-icon-item">
+								<a href="https://www.facebook.com/hungvlt.12" target="_blank"
+									class="social-icon-link bi-facebook" title="Theo dõi chúng tôi trên Facebook"></a>
+							</li>
+							<li class="social-icon-item">
+								<a href="https://www.instagram.com/hungvlt.12/" target="_blank"
+									class="social-icon-link bi-instagram" title="Xem ảnh đẹp trên Instagram"></a>
+							</li>
+							<li class="social-icon-item">
+								<a href="https://www.youtube.com/@@thehung.12" target="_blank"
+									class="social-icon-link bi-youtube" title="Xem video trên YouTube"></a>
+							</li>
+						</ul>
+					</div>
+					<div class="col-lg-3 col-12 mt-4 mb-3 mt-lg-0 mb-lg-0">
+						<em class="text-white d-block mb-4">Liên hệ</em>
+						<p class="d-flex mb-1">
+							<strong class="me-2">Điện thoại:</strong>
+							<a href="tel:0961673343" class="site-footer-link">(+84) 923431369</a>
+						</p>
+						<p class="d-flex mb-1">
+							<strong class="me-2">Email:</strong>
+							<a href="mailto:hungvu01235@gmail.com" class="site-footer-link">tuitendat.030901@gmail.com</a>
+						</p>
+						<p class="d-flex">
+							<strong class="me-2">Hotline:</strong>
+							<a href="tel:123456789" class="site-footer-link">123456789</a>
+						</p>
+					</div>
+					<div class="col-lg-5 col-12">
+						<em class="text-white d-block mb-4">Giờ mở cửa</em>
+						<ul class="opening-hours-list">
+							<li class="d-flex">Thứ Hai - Thứ Sáu <span class="underline"></span> <strong>9:00 - 18:00</strong>
+							</li>
+							<li class="d-flex">Thứ Bảy <span class="underline"></span> <strong>11:00 - 16:30</strong></li>
+							<li class="d-flex">Chủ Nhật <span class="underline"></span> <strong>Đóng cửa</strong></li>
+						</ul>
+						<div class="mt-4">
+							<em class="text-white d-block mb-2">Ứng dụng của chúng tôi</em>
+							<p>
+								<a href="https://play.google.com/store" target="_blank" class="site-footer-link me-3">
+									<img src="~/images/google-play-badge.png" alt="Tải từ Google Play" style="height: 40px;">
+								</a>
+								<a href="https://www.apple.com/app-store/" target="_blank" class="site-footer-link">
+									<img src="~/images/app-store-badge.png" alt="Tải từ App Store" style="height: 40px;">
+								</a>
+							</p>
+						</div>
+					</div>
+					<div class="col-lg-8 col-12 mt-4">
+						<p class="copyright-text mb-0">Bản quyền © Quán Cà Phê Mộc Nhiên - Thiết kế: <a rel="sponsored"
+						href="https://www.facebook.com/MocNhienCoffee/?locale=vi_VN" target="_blank">Lê Thành Đạt</a>
+						</p>
+					</div>
+				</div>
+			</div>
+		</footer>
+	</main>
+
+	<!-- JAVASCRIPT FILES -->
+	<script src="~/js/jquery.min.js"></script>
+	<script src="~/js/bootstrap.min.js"></script>
+	<script src="~/js/jquery.sticky.js"></script>
+	<script src="~/js/click-scroll.js"></script>
+	<script src="~/js/vegas.min.js"></script>
+	<script src="~/js/custom.js"></script>
+
+	@RenderSection("Scripts", required: false)
+</body>
+
+</html>
